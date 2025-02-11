@@ -1,0 +1,23 @@
+import { useState } from "react";
+import axios from "axios";
+
+function App() {
+  const [texto, setTexto] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
+
+  const gerarVideo = async () => {
+    const response = await axios.post("http://127.0.0.1:8000/gerar_video/", { texto });
+    setVideoUrl(response.data.video_path);
+  };
+
+  return (
+    <div>
+      <h1>Gerador de Vídeos por IA</h1>
+      <textarea onChange={(e) => setTexto(e.target.value)} placeholder="Digite seu texto..."></textarea>
+      <button onClick={gerarVideo}>Gerar Vídeo</button>
+      {videoUrl && <video src={videoUrl} controls />}
+    </div>
+  );
+}
+
+export default App;
