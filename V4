@@ -1,0 +1,3 @@
+npx create-react-app gerador-videos
+cd gerador-videos
+npm install axios
