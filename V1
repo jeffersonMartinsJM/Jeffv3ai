@@ -1,0 +1,1 @@
+pip install fastapi uvicorn moviepy openai gtts requests
