@@ -1,0 +1,31 @@
+from fastapi import FastAPI
+import openai
+from gtts import gTTS
+import moviepy.editor as mp
+import os
+import requests
+
+openai.api_key = "SUA_CHAVE_OPENAI"
+
+app = FastAPI()
+
+@app.post("/gerar_video/")
+async def gerar_video(texto: str):
+    # Gera áudio da narração
+    tts = gTTS(text=texto, lang="pt")
+    tts.save("audio.mp3")
+
+    # Gera uma imagem com IA baseada no texto
+    response = openai.Image.create(prompt=texto, n=1, size="512x512")
+    image_url = response['data'][0]['url']
+    img_data = requests.get(image_url).content
+    with open("imagem.png", "wb") as img_file:
+        img_file.write(img_data)
+
+    # Monta o vídeo com imagem e áudio
+    clip = mp.ImageClip("imagem.png", duration=10)
+    audio = mp.AudioFileClip("audio.mp3")
+    clip = clip.set_audio(audio)
+    clip.write_videofile("video.mp4", codec="libx264", fps=24)
+
+    return {"mensagem": "Vídeo gerado!", "video_path": "video.mp4"}
